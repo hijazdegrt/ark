@@ -1,26 +1,114 @@
 @import "tailwindcss";
 
+/* ARK Global Ventures design tokens.
+   Brand palette (supplied): Oxford Blue 192338, Space Cadet 1E2E4F, YInMn Blue 31487A,
+   Jordy Blue 8FB3E2, Lavender 'web' D9E1F1. Accent teal is sampled from the logo arrow. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ark-oxford: #192338;
+  --ark-space: #1e2e4f;
+  --ark-yinmn: #31487a;
+  --ark-jordy: #8fb3e2;
+  --ark-lavender: #d9e1f1;
+  --ark-accent: #1fb8a6;
+  --ark-accent-ink: #0f766e; /* accessible teal for text on light surfaces */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* brand */
+  --color-brand-950: var(--ark-oxford);
+  --color-brand-900: var(--ark-space);
+  --color-brand-700: var(--ark-yinmn);
+  --color-brand-300: var(--ark-jordy);
+  --color-brand-100: var(--ark-lavender);
+  --color-accent: var(--ark-accent);
+  --color-accent-ink: var(--ark-accent-ink);
+  /* surfaces + text */
+  --color-canvas: #ffffff;
+  --color-surface: #f4f6fb;
+  --color-surface-strong: #eaeff8;
+  --color-ink: #192338;
+  --color-ink-soft: #46526a;
+  --color-line: #d9e1f1;
+  --color-line-strong: #b9c6df;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --breakpoint-xs: 30rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  :focus-visible {
+    outline: 2px solid var(--ark-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  ::selection { background: var(--ark-jordy); color: var(--ark-oxford); }
+}
+
+@layer components {
+  .container-ark {
+    width: 100%;
+    max-width: 76rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 40rem) { .container-ark { padding-inline: 2rem; } }
+  @media (min-width: 64rem) { .container-ark { padding-inline: 3rem; } }
+
+  .section { padding-block: 4.5rem; }
+  @media (min-width: 64rem) { .section { padding-block: 7rem; } }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ark-accent-ink);
+  }
+  .on-dark .eyebrow { color: var(--ark-accent); }
+
+  .grid-lines {
+    background-image:
+      linear-gradient(to right, rgb(143 179 226 / 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(143 179 226 / 0.08) 1px, transparent 1px);
+    background-size: 56px 56px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Scroll reveal: pure CSS (no JS, no hydration impact). Browsers without scroll-driven
+   animations simply show the content. */
+@keyframes reveal-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] { animation: reveal-in linear both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
+  }
+}
+
+@keyframes flow { to { stroke-dashoffset: -24; } }
+@keyframes pulse-node { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+.anim-flow { animation: flow 2.4s linear infinite; }
+.anim-pulse { animation: pulse-node 3.2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .anim-flow, .anim-pulse { animation: none; }
+  * { transition-duration: 0.01ms !important; }
 }
